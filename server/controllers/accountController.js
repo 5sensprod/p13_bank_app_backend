@@ -5,7 +5,7 @@ module.exports.getAllAccounts = async (req, res) => {
 
     try {
         const userId = req.params.userId;
-        const accounts = await accountService.getAccountsByUserId(userId);  // Change here
+        const accounts = await accountService.getAccountsByUserId(userId);
         
         response.status = 200;
         response.message = 'Successfully retrieved accounts';
@@ -64,29 +64,29 @@ module.exports.createAccount = async (req, res) => {
     return res.status(response.status).send(response);
 };
 
-module.exports.updateAccount = async (req, res) => {
-    let response = {};
+// module.exports.updateAccount = async (req, res) => {
+//     let response = {};
 
-    try {
-        const accountId = req.params.accountId;
-        const updatedAccount = await accountService.updateAccount(accountId, req.body);
+//     try {
+//         const accountId = req.params.accountId;
+//         const updatedAccount = await accountService.updateAccount(accountId, req.body);
         
-        if(updatedAccount) {
-            response.status = 200;
-            response.message = 'Successfully updated account';
-            response.body = updatedAccount;
-        } else {
-            response.status = 404;
-            response.message = 'Account not found';
-        }
-    } catch (error) {
-        console.error('Error in updateAccount', error);
-        response.status = 500;
-        response.message = error.message;
-    }
+//         if(updatedAccount) {
+//             response.status = 200;
+//             response.message = 'Successfully updated account';
+//             response.body = updatedAccount;
+//         } else {
+//             response.status = 404;
+//             response.message = 'Account not found';
+//         }
+//     } catch (error) {
+//         console.error('Error in updateAccount', error);
+//         response.status = 500;
+//         response.message = error.message;
+//     }
 
-    return res.status(response.status).send(response);
-};
+//     return res.status(response.status).send(response);
+// };
 
 module.exports.deleteAccount = async (req, res) => {
     let response = {};
@@ -116,7 +116,7 @@ module.exports.createBulkAccounts = async (req, res) => {
 
     try {
         const userId = req.params.userId;
-        const accountsData = req.body.accounts; // Suppose que le corps contient un tableau nommé "accounts"
+        const accountsData = req.body.accounts;
         const createdAccounts = [];
 
         for (let accountData of accountsData) {

@@ -13,7 +13,7 @@ router.get('/user/:userId/accounts/:accountId', tokenValidation.validateToken, a
 router.post('/user/:userId/accounts', tokenValidation.validateToken, accountController.createAccount);
 
 // Mettre à jour un compte spécifique
-router.put('/user/:userId/accounts/:accountId', tokenValidation.validateToken, accountController.updateAccount);
+// router.put('/user/:userId/accounts/:accountId', tokenValidation.validateToken, accountController.updateAccount);
 
 // Supprimer un compte
 router.delete('/user/:userId/accounts/:accountId', tokenValidation.validateToken, accountController.deleteAccount);

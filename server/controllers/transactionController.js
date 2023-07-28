@@ -69,12 +69,12 @@ module.exports.createBulkTransactions = async (req, res) => {
         const accountId = req.params.accountId;
         const transactionsData = req.body.transactions; 
 
-        // Valider les données entrantes
+        // Valide les données entrantes
         if (!transactionsData || !Array.isArray(transactionsData)) {
             throw new Error("Invalid transactions data");
         }
 
-        // Ajouter l'accountId à chaque transaction
+        // Ajoute l'accountId à chaque transaction
         transactionsData.forEach(transaction => transaction.account = accountId);
 
         const createdTransactions = await transactionService.createBulkTransactions(transactionsData);

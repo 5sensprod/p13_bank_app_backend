@@ -34,14 +34,14 @@ module.exports.getAccountsByUserId = async userId => {
     }
 };
 
-module.exports.updateAccount = async (accountId, updateData) => {
-  try {
-    return await Account.findByIdAndUpdate(accountId, updateData, { new: true });
-  } catch (error) {
-    console.error('Error in accountService.js: updateAccount', error);
-    throw new Error(error);
-  }
-};
+// module.exports.updateAccount = async (accountId, updateData) => {
+//   try {
+//     return await Account.findByIdAndUpdate(accountId, updateData, { new: true });
+//   } catch (error) {
+//     console.error('Error in accountService.js: updateAccount', error);
+//     throw new Error(error);
+//   }
+// };
 
 module.exports.deleteAccount = async accountId => {
   try {

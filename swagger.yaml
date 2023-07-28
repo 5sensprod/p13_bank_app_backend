@@ -70,6 +70,7 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
       produces:
         - application/json
       responses:
@@ -79,6 +80,9 @@ paths:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+          
         '500':
           description: Internal Server Error
     put:
@@ -93,6 +97,7 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
         - in: body
           name: body
           description: Update user profile attributes
@@ -127,17 +132,16 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
       produces:
         - application/json
       responses:
         '200':
-          description: Accounts successfully retrieved
-        '400':
-          description: Invalid data
+          description: Successfully retrieved accounts
+          schema:
+            $ref: '#/definitions/AccountResponse'
         '401':
-          description: Authentication required
-        '404':
-          description: User not found
+          description: Unauthorized
         '500':
           description: Server error
     post:
@@ -156,85 +160,48 @@ paths:
           name: body
           required: true
           schema:
-            $ref: '#/definitions/Account'
+            $ref: '#/definitions/NewAccount'
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
       produces:
         - application/json
       responses:
-      '201':
-        description: Account successfully created
-      '400':
-        description: Invalid data
-      '401':
-        description: Authentication required
-      '500':
-        description: Server error
+        '201':
+          description: Successfully created account
+          schema:
+            $ref: '#/definitions/NewAccountResponse'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal Server Error
   /user/{userId}/accounts/{accountId}:
     get:
       security:
         - Bearer: []
       summary: Retrieve a specific account of a user
       tags:
-        - Account
+        - Account Module
       parameters:
         - in: path
           name: userId
           required: true
+          type: string
           description: ID of the user
-          schema:
-            type: string
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
-          schema:
-            type: string
       responses:
         '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/Account'
-        '404':
-          description: Account not found
-        '500':
-          description: Server error
-    put:
-      security:
-        - Bearer: []
-      summary: Update a specific account
-      tags:
-        - Account
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          description: ID of the user
+          description: Successfully retrieved account
           schema:
-            type: string
-        - in: path
-          name: accountId
-          required: true
-          description: ID of the account
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/Account'
-      responses:
-        '200':
-          description: Account updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/Account'
+            $ref: '#/definitions/Account'
         '404':
           description: Account not found
         '500':
@@ -244,23 +211,21 @@ paths:
         - Bearer: []
       summary: Delete an account
       tags:
-        - Account
+        - Account Module
       parameters:
         - in: path
           name: userId
           required: true
+          type: string
           description: ID of the user
-          schema:
-            type: string
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
-          schema:
-            type: string
       responses:
         '200':
-          description: Account deleted successfully
+          description: Successfully deleted account
         '404':
           description: Account not found
         '500':
@@ -271,32 +236,21 @@ paths:
         - Bearer: []
       summary: Create multiple accounts for a user
       tags:
-        - Account
+        - Account Module
       parameters:
         - in: path
           name: userId
           required: true
+          type: string
           description: ID of the user
+        - in: body
+          name: body
+          required: true
           schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/definitions/Account'
-            description: Array of accounts to be created
+            $ref: '#/definitions/BulkAccount'
       responses:
         '201':
-          description: Accounts created successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/Account'
+          description: Successfully created accounts
         '400':
           description: Bad Request
         '500':
@@ -312,18 +266,13 @@ paths:
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
-          schema:
-            type: string
       responses:
         '200':
           description: Successfully retrieved transactions
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/Transaction'
+          schema:
+            $ref: '#/definitions/Transaction'
         '400':
           description: Bad Request
         '500':
@@ -338,22 +287,16 @@ paths:
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
+        - in: body
+          name: body
+          required: true
           schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/Transaction'
+            $ref: '#/definitions/NewTransaction'
       responses:
         '201':
           description: Successfully created transaction
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/Transaction'
         '400':
           description: Bad Request
         '500':
@@ -369,15 +312,13 @@ paths:
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
-          schema:
-            type: string
         - in: path
           name: transactionId
           required: true
+          type: string
           description: ID of the transaction to be deleted
-          schema:
-            type: string
       responses:
         '200':
           description: Transaction deleted successfully
@@ -395,30 +336,26 @@ paths:
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
-          schema:
-            type: string
         - in: path
           name: transactionId
           required: true
+          type: string
           description: ID of the transaction to be updated
+        - in: body
+          name: body
+          description: Update user profile attributes
+          required: true
           schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/definitions/Transaction'
+            $ref: '#/definitions/UpdateTransaction'
       responses:
         '200':
           description: Transaction successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/Transaction'
+          schema:
+            $ref: '#/definitions/UpdateTransactionResponse'
         '400':
-          description: Invalid updates or Bad Request
+          description: Bad Request
         '404':
           description: Transaction not found
         '500':
@@ -434,28 +371,18 @@ paths:
         - in: path
           name: accountId
           required: true
+          type: string
           description: ID of the account
+        - in: body
+          name: body
+          required: true
           schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/definitions/Transaction'
+            $ref: '#/definitions/TransactionBulk'
       responses:
         '201':
           description: Successfully added transactions in bulk
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/definitions/Transaction'
         '400':
-          description: Bad Request or Invalid transactions data
+          description: Bad Request
         '500':
           description: Server error
 securityDefinitions:
@@ -512,36 +439,153 @@ definitions:
         type: string
       lastName:
         type: string
+  NewAccount:
+    type: object
+    properties:
+      title:
+        type: string
+      balance:
+        type: number
+      description:
+        type: string
+  NewAccountResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 201
+      message:
+        type: string
+        example: "Successfully created account"
+      body:
+        type: object
+        properties:
+          transactions:
+            type: array
+            items:
+              type: string
+          _id:
+            type: string
+          user:
+            type: string
+          title:
+            type: string
+          balance:
+            type: number
+          description:
+            type: string
+          __v:
+            type: integer
+  ErrorResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        example: 400
+      message:
+        type: string
+        example: "ValidationError: title: Path `title` is required."
   Account:
+    type: object
+    required:
+      - user
+      - title
+      - balance
+      - description
+    properties:
+      transactions:
+        type: array
+        items:
+          type: string
+      _id:
+        type: string
+        description: The unique ID for the account.
+      user:
+        type: string
+      title:
+        type: string
+      balance:
+        type: number
+      description:
+        type: string
+      __v:
+        type: integer
+        description: Version key for Mongoose (used for internal tracking).
+  AccountResponse:
       type: object
-      required:
-        - user
-        - title
-        - balance
-        - description
       properties:
-        user:
+        status:
+          type: integer
+          example: 200
+        message:
           type: string
-        title:
-          type: string
-        balance:
-          type: number
-        description:
-          type: string
-        transactions:
+          example: "Successfully retrieved accounts"
+        body:
           type: array
           items:
-            type: string
+            $ref: '#/definitions/Account'
+  AccountBulk:
+    type: object
+    required:
+      - title
+      - balance
+      - description
+    properties:
+      title:
+        type: string
+      balance:
+        type: number
+      description:
+        type: string
+  BulkAccount:
+    type: object
+    required:
+      - accounts
+    properties:
+      accounts:
+        type: array
+        items:
+          $ref: '#/definitions/AccountBulk'
   Transaction:
     type: object
-    
     properties:
+      _id:
+        type: string
+        description: The unique identifier for the transaction
+      description:
+        type: string
+        description: A brief description of the transaction
+      amount:
+        type: number
+        description: The transaction amount
+      balance:
+        type: number
+        description: The balance after the transaction
+      transactionType:
+        type: string
+        enum:
+          - Electronic
+          - Manual
+        description: The type of transaction (e.g., Electronic, Manual)
+      category:
+        type: string
+        description: The category of the transaction (e.g., Deposit, Withdrawal)
+      notes:
+        type: string
+        description: Additional notes regarding the transaction
       account:
         type: string
-        format: uuid
+        description: The account associated with this transaction
       date:
         type: string
         format: date-time
+        description: The date and time of the transaction
+      __v:
+        type: integer
+        description: Version key
+  NewTransaction:
+    type: object
+    properties:
       description:
         type: string
       amount:
@@ -553,8 +597,111 @@ definitions:
         enum:
           - Electronic
           - Manual
-          # Add other transaction types if any
+          # Ajoutez d'autres types de transactions si nécessaire
       category:
         type: string
       notes:
         type: string
+    required:
+      - description
+      - amount
+      - balance
+      - transactionType
+      - category
+      - notes
+  UpdateTransaction:
+    type: object
+    properties:
+      notes:
+        type: string
+        description: "La note associée à la transaction."
+      category:
+        type: string
+        description: "La catégorie de la transaction."
+    required:
+      - category
+      - notes
+  UpdateTransactionResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        description: "Le code de statut de la réponse."
+      message:
+        type: string
+        description: "Un message décrivant le résultat de la mise à jour."
+      body:
+        type: object
+        properties:
+          _id:
+            type: string
+            format: uuid
+            description: "L'identifiant unique de la transaction."
+          description:
+            type: string
+            description: "Une description de la transaction."
+          amount:
+            type: number
+            description: "Le montant de la transaction."
+          balance:
+            type: number
+            description: "Le solde après la transaction."
+          transactionType:
+            type: string
+            enum:
+              - Electronic
+              # Add other transaction types if any
+            description: "Le type de la transaction."
+          category:
+            type: string
+            description: "La catégorie de la transaction."
+          notes:
+            type: string
+            description: "Des notes supplémentaires concernant la transaction."
+          account:
+            type: string
+            format: uuid
+            description: "L'identifiant unique du compte associé à la transaction."
+          date:
+            type: string
+            format: date-time
+            description: "La date et l'heure de la transaction."
+          __v:
+            type: integer
+            description: "La version du document."
+    required:
+      - status
+      - message
+      - body
+  TransactionBulk:
+    type: object
+    properties:
+      transactions:
+        type: array
+        items:
+          type: object
+          properties:
+            description:
+              type: string
+              description: "Une description de la transaction."
+            amount:
+              type: number
+              description: "Le montant de la transaction."
+            balance:
+              type: number
+              description: "Le solde après la transaction."
+            transactionType:
+              type: string
+              enum:
+                - Electronic
+                - Manual
+              description: "Le type de la transaction."
+            category:
+              type: string
+              description: "La catégorie de la transaction."
+            notes:
+              type: string
+              description: "Des notes supplémentaires concernant la transaction."
+        description: "Liste des transactions."
+    required:
+      - transactions
